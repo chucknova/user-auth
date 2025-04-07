@@ -196,94 +196,53 @@
 
 <body>
     <div class="container">
-        <h1>Create an account to get started</h1>
-        <div class="input-group">
-            <input type="text" placeholder="Enter your first and last name" name="full-name" id="fullName">
-        </div>
+        <h1>Login to continue to your account</h1>
         <div class="input-group">
             <input type="email" placeholder="Enter your email" name="email" id="email">
         </div>
         <div class="input-group">
-            <input type="password" placeholder="Create a strong password easy to remember" name="password"
-                id="password">
+            <input type="password" placeholder="Enter your password" name="password" id="password">
         </div>
-        <div class="input-group">
-            <input type="password" placeholder="Confirm your password" name="confirm-password" id="confirmPassword">
-        </div>
-        <label class="checkbox-group">
-            <input type="checkbox" id="receiveUpdates">
-            <span>I agree to receive updates from Temi's Coffee Lounge</span>
-        </label>
-        <button onclick="createAccount()">Create my account</button>
+        <button onclick="loginAccount()">Login</button>
     </div>
-
-    <div class="data-table">
-        <table>
-            <tr>
-                <th>S-N</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Agree to receive</th>
-            </tr>
-            <tbody id="dataDisplay">
-
-            </tbody>
-        </table>
-    </div>
-
     <script>
         let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || []
-        display()
+        let userPassword = document.getElementById("password")
+        let email = document.getElementById("email")
+        localStorage.setItem('isLoggedIn', JSON.stringify(false))
+        console.log(userDatabase);
+        let userName = JSON.parse(localStorage.getItem('username')) || [];
+        console.log(userName);
 
-        function createAccount() {
-            let userData = {
-                username: fullName.value,
-                email: email.value,
-                password: password.value,
-                confirmpassword: confirmPassword.value,
-                receiveUpdates: receiveUpdates.checked,
+        function loginAccount() {
+            let foundUser = userDatabase.find(existingUser => existingUser.email === email.value)
+            console.log(foundUser);
+            if (email.value === '' && userPassword.value === '') {
+                alert("Field cannot be empty")
             }
+            else if (email.value === '' || userPassword.value === '') {
+                alert("Missing field")
+            }
+            else if (!foundUser) {
+                alert("User doesn't exist")
+            }
+            else if (foundUser) {
+                if (foundUser.email === email.value && foundUser.password === password.value) {
+                    localStorage.setItem('isLoggedIn', JSON.stringify(true))
+                    alert(`Welcome Back ${foundUser.username}`)
+                    userName.push(foundUser.username)
+                    localStorage.setItem('username', JSON.stringify(userName))
 
-            if (fullName.value === '' && email.value === '' && password.value === '' && confirmPassword.value === '') {
-                alert("You haven't filled anything")
+                    window.location.href = "dashboard.html"
+                }
+                else {
+                    alert("Check your password again")
+                }
+
+
             }
-            else if (fullName.value === '' || email.value === '' || password.value === '' || confirmPassword.value === '') {
-                alert("Missing Input Field")
-            }
-            else if (password.value.trim().length <= 7) {
-                alert("Password length should be 8 or more characters")
-            }
-            else if (password.value !== confirmPassword.value) {
-                alert("Password must match")
-            }
-            else if (userDatabase.find(user => user.email === email.value)) {
-                alert("Email exists already")
-            }
-            else {
-                userDatabase.push(userData)
-                localStorage.setItem('userDatabase', JSON.stringify(userDatabase))
-                alert("Account Created Successfully!")
-                window.location.href = 'login.html'
-            }
-            console.log(userDatabase);
-            display()
         }
 
-        function display() {
-            dataDisplay.innerHTML = ''
-            userDatabase.forEach((user, i, arr) => {
-                dataDisplay.innerHTML += `
-               <tr>
-                    <td>${i + 1}</td >
-                    <td>${user.username}</td >
-                    <td>${user.email}</td >
-                    <td>${user.password}</td >
-                    <td>${user.receiveUpdates}</td >
-                </tr >
-            `
-            })
-        }
     </script>
 </body>
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #displayUsername {
+            background-color: #fff;
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #displayUsername h2 {
+            font-size: 28px;
+            color: #333;
+            margin: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="displayUsername">
+
+    </div>
+
+    <script>
+        let getLoginStatus = JSON.parse(localStorage.getItem('isLoggedIn'))
+        console.log(getLoginStatus);
+        if (getLoginStatus !== true) {
+            alert("Nothing for you, brother")
+            window.location.href = "login.html"
+        }
+        else {
+            function doNothing() {
+
+            }
+        }
+
+        let getUser = JSON.parse(localStorage.getItem('username')) || [];
+        console.log(getUser); // just checking...
+
+        let index = getUser.length - 1
+        let username = getUser[index]
+
+        displayUsername.innerHTML = ` <h2>Hello ${username}</h2>`
+
+
+
+
+
+    </script>
+</body>
+
+</html>
