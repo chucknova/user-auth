@@ -42,22 +42,31 @@
         let getLoginStatus = JSON.parse(localStorage.getItem('isLoggedIn'))
         console.log(getLoginStatus);
         if (getLoginStatus !== true) {
-            alert("Nothing for you, brother")
+            document.body.innerHTML = `<h2>Loading...</h2 >`
+            alert("Unauthorized User!")
             window.location.href = "login.html"
         }
         else {
-            function doNothing() {
+            display()
+        }
 
+        function display() {
+            let getUser = JSON.parse(localStorage.getItem('userIndex'))
+            let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || []
+            console.log(getUser, userDatabase);
+            let userName = userDatabase[getUser].username
+            displayUsername.innerHTML = `<h2>Hello ${userName}</h2 > <button onclick = "logOut()">Logout</button >`
+
+
+            function logOut() {
+                localStorage.removeItem('userIndex')
+                window.location.href = "login.html"
             }
         }
 
-        let getUser = JSON.parse(localStorage.getItem('username')) || [];
-        console.log(getUser); // just checking...
 
-        let index = getUser.length - 1
-        let username = getUser[index]
 
-        displayUsername.innerHTML = ` <h2>Hello ${username}</h2>`
+
 
 
 

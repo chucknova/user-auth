@@ -138,6 +138,10 @@
             background: var(--accent-hover);
         }
 
+        button:disabled {
+            opacity: 20%;
+        }
+
         .data-table {
             width: 100%;
             max-width: 800px;
@@ -214,7 +218,7 @@
             <input type="checkbox" id="receiveUpdates">
             <span>I agree to receive updates from Temi's Coffee Lounge</span>
         </label>
-        <button onclick="createAccount()">Create my account</button>
+        <button id="signUpButton" onclick=" createAccount()">Create my account</button>
     </div>
 
     <div class="data-table">
@@ -264,7 +268,12 @@
                 userDatabase.push(userData)
                 localStorage.setItem('userDatabase', JSON.stringify(userDatabase))
                 alert("Account Created Successfully!")
-                window.location.href = 'login.html'
+                signUpButton.disabled = true
+                signUpButton.innerHTML = "Loading..."
+                setTimeout(() => {
+                    window.location.href = 'login.html'
+                    signUpButton.disabled = false
+                }, 3000);
             }
             console.log(userDatabase);
             display()

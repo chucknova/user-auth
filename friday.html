@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="makePost">
+        <input id="title" type="text" placeholder="title" />
+        <input id="description" type=" text" placeholder="description" />
+        <input id="inputFile" type="file" accept=".png,.jpg" onchange="pickPicture()" />
+        <img width="50" height="50" id="image" />
+        <button onclick="postBlog()"> post </button>
+
+
+    </div>
+
+</body>
+
+</html>
+<script>
+    postDatabase = JSON.parse(localStorage.getItem('posts')) || []
+    function pickPicture() {
+        let inputFile = document.getElementById('inputFile') //input element
+        console.log(inputFile);
+        let file = inputFile.files[0]; // file Object
+
+        let myReader = new FileReader()
+
+        if (!file) {
+            alert('cant read file')
+        } else {
+            myReader.readAsDataURL(file)
+        }
+
+
+        myReader.addEventListener('load', (i) => {
+            let result = i.target.result
+            image.src = result
+            console.log(result);
+        })
+
+    }
+
+    function postBlog() {
+        myPost = {
+            title: title.value,
+            description: description.value,
+            image: inputFile.value
+        }
+
+        postDatabase.push(myPost)
+
+        localStorage.setItem('posts', JSON.stringify(postDatabase))
+
+        console.log(postDatabase);
+        window.location.href = 'posts.html'
+
+    }
+
+</script>

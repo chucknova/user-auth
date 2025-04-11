@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+</head>
+
+<body style="background-color: brown;">
+    <h1>Posts</h1>
+    <div id="display">
+
+    </div>
+</body>
+
+</html>
+<script>
+    let postDatabase = JSON.parse(localStorage.getItem('posts'))
+    console.log(postDatabase);
+
+    let postLoop = postDatabase.forEach(post => {
+        console.log(post);
+        display.innerHTML += `
+        <img src="${post.image}" alt="" srcset="">
+            <h3>${post.title}</h3>
+            <p>${post.description}</p >`
+
+    });
+
+
+</script>

@@ -211,8 +211,6 @@
         let email = document.getElementById("email")
         localStorage.setItem('isLoggedIn', JSON.stringify(false))
         console.log(userDatabase);
-        let userName = JSON.parse(localStorage.getItem('username')) || [];
-        console.log(userName);
 
         function loginAccount() {
             let foundUser = userDatabase.find(existingUser => existingUser.email === email.value)
@@ -230,8 +228,12 @@
                 if (foundUser.email === email.value && foundUser.password === password.value) {
                     localStorage.setItem('isLoggedIn', JSON.stringify(true))
                     alert(`Welcome Back ${foundUser.username}`)
-                    userName.push(foundUser.username)
-                    localStorage.setItem('username', JSON.stringify(userName))
+                    let index = userDatabase.findIndex((userIndex) => {
+                        return userIndex.email === foundUser.email
+                    })
+                    console.log(index);
+                    localStorage.setItem('userIndex', JSON.stringify(index))
+
 
                     window.location.href = "dashboard.html"
                 }
