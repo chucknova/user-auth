@@ -2,76 +2,253 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        #displayUsername {
-            background-color: #fff;
-            padding: 40px 60px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        #displayUsername h2 {
-            font-size: 28px;
+            background: #f2f4f8;
             color: #333;
-            margin: 0;
+        }
+
+        .wrapper {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info button,
+        .user-info input[type="file"] {
+            margin-top: 8px;
+        }
+
+        .user-info button {
+            padding: 10px 18px;
+            background-color: #0077ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .user-info button:hover {
+            background-color: #005fcc;
+        }
+
+        .post-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-form input[type="text"],
+        .post-form input[type="file"] {
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: border 0.2s ease;
+        }
+
+        .post-form input[type="text"]:focus {
+            border-color: #0077ff;
+            outline: none;
+        }
+
+        .post-form img {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 8px;
+            background-color: #fafafa;
+        }
+
+        .post-form button {
+            padding: 12px 20px;
+            background-color: #00b894;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .post-form button:hover {
+            background-color: #019e7c;
+        }
+
+        @media (min-width: 600px) {
+            .user-info {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .user-info>div {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 
 </head>
 
 <body>
-    <div id="displayUsername">
+    <div class="wrapper">
+        <div class="user-info" id="displayUsername">
+            <!-- JS will inject user info and buttons here -->
+        </div>
 
+        <div class="post-form" id="makePost">
+            <input id="title" type="text" placeholder="Title" />
+            <input id="description" type="text" placeholder="Description" />
+            <input id="inputFile" type="file" accept=".png,.jpg" onchange="pickPicture()" />
+            <img id="image" />
+            <button onclick="postBlog()">Post</button>
+        </div>
     </div>
 
     <script>
+        let getUser = JSON.parse(localStorage.getItem('userIndex'))
+        let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || []
+        let userName = userDatabase[getUser].username
+        let userPostsKey = `${userName}_posts`
+        let postDatabase = JSON.parse(localStorage.getItem(`${userPostsKey}`)) || []
         let getLoginStatus = JSON.parse(localStorage.getItem('isLoggedIn'))
-        console.log(getLoginStatus);
+
         if (getLoginStatus !== true) {
-            document.body.innerHTML = `<h2>Loading...</h2 >`
+            document.body.innerHTML = `<h2>Loading...</h2>`
             alert("Unauthorized User!")
             window.location.href = "login.html"
-        }
-        else {
+        } else {
             display()
         }
 
         function display() {
-            let getUser = JSON.parse(localStorage.getItem('userIndex'))
-            let userDatabase = JSON.parse(localStorage.getItem('userDatabase')) || []
-            console.log(getUser, userDatabase);
-            let userName = userDatabase[getUser].username
-            displayUsername.innerHTML = `<h2>Hello ${userName}</h2 > <button onclick = "logOut()">Logout</button >`
-
-
-            function logOut() {
-                localStorage.removeItem('userIndex')
-                window.location.href = "login.html"
-            }
+            displayUsername.innerHTML = `
+        <div>
+          <h2>Hello ${userName}</h2>
+          <button onclick="logOut()">Logout</button>
+          <input id="imagePfp" type="file" accept=".png,.jpg" onchange="changePfp()"/>
+          <button onclick="uploadPicture()">Upload Profile Picture</button>
+        </div>
+        <img id="displayPfp" />
+      `
         }
 
+        function logOut() {
+            localStorage.removeItem('userIndex')
+            window.location.href = "login.html"
+        }
 
+        function pickPicture() {
+            let inputFile = document.getElementById('inputFile')
+            let file = inputFile.files[0];
+            let myReader = new FileReader()
 
+            if (!file) {
+                alert('Cannot read file')
+                return
+            }
 
+            myReader.readAsDataURL(file)
 
+            myReader.addEventListener('load', (e) => {
+                let result = e.target.result
+                image.src = result
 
+                let myPost = {
+                    title: title.value,
+                    description: description.value,
+                    image: result,
+                    likedPost: false,
+                    color: "white",
+                    text: "Like Post"
+                }
 
+                postDatabase.push(myPost)
+                localStorage.setItem(`${userPostsKey}`, JSON.stringify(postDatabase))
+            })
+        }
 
+        function postBlog() {
+            window.location.href = 'posts.html'
+        }
 
+        window.onload = function () {
+            uploadPicture();
+        }
+
+        let userPfpKey = `${userName}_pfp`
+        let singlePfpArray = JSON.parse(localStorage.getItem(`${userPfpKey}`)) || []
+
+        function changePfp() {
+            let imagePfp = document.getElementById('imagePfp')
+            let file = imagePfp.files[0];
+            let myReader = new FileReader()
+
+            if (!file) {
+                alert('Cannot read file')
+                return
+            }
+
+            myReader.readAsDataURL(file)
+
+            myReader.addEventListener('load', (e) => {
+                let result = e.target.result
+                if (singlePfpArray.length === 0) {
+                    singlePfpArray.push(result)
+                } else {
+                    singlePfpArray[0] = result
+                }
+                localStorage.setItem(`${userPfpKey}`, JSON.stringify(singlePfpArray))
+                uploadPicture()
+            })
+        }
+
+        function uploadPicture() {
+            const displayPfp = document.getElementById('displayPfp')
+            if (singlePfpArray.length > 0) {
+                displayPfp.src = singlePfpArray[0]
+            } else {
+                displayPfp.src = "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
+            }
+        }
     </script>
 </body>
 

@@ -4,29 +4,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
+    <title>Post</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 36px;
+            color: #4b4b4b;
+        }
+
+        #display {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .post {
+            padding: 16px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .post img {
+            width: 100%;
+            /* Reduced the image width */
+            height: 200px;
+            /* Fixed height to reduce size */
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .post h3 {
+            font-size: 22px;
+            margin: 12px 0;
+            color: #333;
+        }
+
+        .post p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .heart-btn {
+            padding: 12px 18px;
+            background-color: #fff;
+            color: #333;
+            border: 2px solid #0077ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .heart-btn:hover {
+            background-color: #0077ff;
+            color: #fff;
+        }
+
+        .heart-btn:active {
+            transform: scale(0.98);
+        }
+
+        .heart-btn.liked {
+            background-color: red;
+            color: white;
+        }
+    </style>
 </head>
 
-<body style="background-color: brown;">
-    <h1>Posts</h1>
-    <div id="display">
+<body>
 
-    </div>
+    <h1>Posts</h1>
+    <div id="display"></div>
+
+    <script>
+        let userDatabase = JSON.parse(localStorage.getItem('userDatabase'))
+        let getUser = JSON.parse(localStorage.getItem('userIndex'))
+        let usernameKey = userDatabase[getUser].username;
+        let userPostsKey = `${usernameKey}_posts`
+
+        let postDatabase = JSON.parse(localStorage.getItem(`${userPostsKey}`)) || [];
+        console.log(postDatabase);
+
+        postDatabase.forEach((post, index) => {
+            console.log(post);
+            console.log(index);
+
+            display.innerHTML += `
+            <div class="post">
+                <img src="${post.image}" alt="image">
+                <h3>${post.title}</h3>
+                <p>${post.description}</p>
+                <button class="heart-btn" onclick="likePost(${index}, event)" style="background-color: ${post.color || 'white'}">
+                    ${postDatabase[index].text || "Like Post"}
+                </button>
+            </div>
+            `;
+        });
+
+        function likePost(index, event) {
+            let postDatabase = JSON.parse(localStorage.getItem(`${userPostsKey}`))
+            if (postDatabase[index].likedPost === false) {
+                postDatabase[index].likedPost = true;
+                postDatabase[index].color = "red";
+                postDatabase[index].text = "Liked Post";
+                event.target.style.backgroundColor = postDatabase[index].color;
+                event.target.innerHTML = postDatabase[index].text;
+                localStorage.setItem(`${userPostsKey}`, JSON.stringify(postDatabase));
+            } else {
+                postDatabase[index].likedPost = false;
+                postDatabase[index].color = "white";
+                postDatabase[index].text = "Like Post";
+                event.target.style.backgroundColor = postDatabase[index].color;
+                event.target.innerHTML = postDatabase[index].text;
+                localStorage.setItem(`${userPostsKey}`, JSON.stringify(postDatabase));
+            }
+            console.log("Post liked status:", postDatabase[index].likedPost, "Like Button Color:", postDatabase[index].color);
+        }
+    </script>
+
 </body>
 
 </html>
-<script>
-    let postDatabase = JSON.parse(localStorage.getItem('posts'))
-    console.log(postDatabase);
-
-    let postLoop = postDatabase.forEach(post => {
-        console.log(post);
-        display.innerHTML += `
-        <img src="${post.image}" alt="" srcset="">
-            <h3>${post.title}</h3>
-            <p>${post.description}</p >`
-
-    });
-
-
-</script>
